@@ -1,0 +1,13 @@
+.git
+.venv
+BOX
+frontend
+runs
+weights
+backend/models
+__pycache__
+*.pyc
+*.pt
+!backend/models/smart_cart.pt
+*.log
+yolov8n.pt

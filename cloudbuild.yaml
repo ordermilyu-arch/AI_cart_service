@@ -1,0 +1,44 @@
+# GitHub -> Cloud Build Trigger -> Cloud Run GPU 자동 배포 설정
+# 최종 V7 가중치는 Docker 이미지에 포함되므로 API 키나 Cloud Storage가 필요 없다.
+substitutions:
+  _REGION: us-central1
+  _SERVICE: smart-cart-api
+  _REPOSITORY: smart-cart
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - backend/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$COMMIT_SHA
+      - .
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$COMMIT_SHA
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$COMMIT_SHA
+      - --region=${_REGION}
+      - --platform=managed
+      - --execution-environment=gen2
+      - --allow-unauthenticated
+      - --port=8080
+      - --cpu=4
+      - --memory=16Gi
+      - --gpu=1
+      - --gpu-type=nvidia-l4
+      - --no-cpu-throttling
+      - --concurrency=1
+      - --min-instances=1
+      - --max-instances=1
+      - --timeout=30
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$COMMIT_SHA
