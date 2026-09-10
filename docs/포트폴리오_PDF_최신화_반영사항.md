@@ -1,7 +1,7 @@
 # AI Cart Service 포트폴리오 PDF 최신화 반영사항
 
-기준 저장소: `ordermilyu-arch/AI_cart_service`  
-기준 버전: V7 YOLOv8 로컬 모델 포함 버전  
+기준 저장소: `ordermilyu-arch/AI_cart_service`
+기준 버전: V7 YOLOv8 로컬 모델 포함 버전
 작성일: 2026-09-10
 
 이 문서는 기존 포트폴리오 PDF를 최신 구현 상태로 갱신할 때 반영할 내용을 정리한 것이다. 아래 내용은 GitHub 저장소에 포함된 코드와 모델을 기준으로 작성했으며, 실제로 아직 배포하지 않은 기능은 별도로 구분했다.
