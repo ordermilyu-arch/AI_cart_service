@@ -23,33 +23,69 @@
   → 2회 연속 확인 후 장바구니 반영
 ```
 
-배포 환경에서는 GitHub push가 Vercel 프론트엔드와 Cloud Run GPU 백엔드를 각각 갱신합니다. 최종 V7 가중치는 이 저장소의 `backend/models/smart_cart.pt`에 포함되어 Docker 이미지와 함께 배포됩니다.
+최종 V7 가중치가 `backend/models/smart_cart.pt`에 포함되어 있으므로, Roboflow API 키나 별도의 모델 다운로드 없이 바로 로컬 테스트를 할 수 있습니다.
 
-## 로컬 실행
+## 처음 실행하기
 
-### 1. 백엔드
+### 실행 전 설치할 것
 
-V7 모델 파일을 `backend/models/smart_cart.pt`에 준비한 뒤 실행합니다.
+- [Git](https://git-scm.com/downloads)
+- Python 3.10 이상
+- Node.js LTS (npm 포함)
+- 카메라가 연결된 컴퓨터
+
+NVIDIA GPU가 없어도 실행은 가능합니다. 다만 YOLO가 CPU로 동작하므로 상품 인식 속도는 더 느릴 수 있습니다.
+
+### 1. 프로젝트 받기
+
+터미널에서 한 번만 실행합니다.
 
 ```bash
-cd /mnt/c/folder/AI_cart_service
+git clone https://github.com/ordermilyu-arch/AI_cart_service.git
+cd AI_cart_service
+```
+
+### 2. 백엔드 실행
+
+터미널 창 1에서 아래 명령을 순서대로 실행하고, 이 창은 켜 둡니다.
+
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -r requirements.txt
 python3 backend/app.py
 ```
 
-### 2. 프론트엔드
+마지막 줄에 아래처럼 보이면 정상입니다.
 
-별도 터미널에서 실행합니다.
+```text
+Smart Cart API: http://127.0.0.1:8000
+```
+
+Windows PowerShell에서는 가상환경 활성화 명령만 아래처럼 다릅니다.
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### 3. 프론트엔드 실행
+
+새 터미널 창 2에서 실행합니다. 백엔드 터미널은 종료하지 않습니다.
 
 ```bash
 cd /mnt/c/folder/AI_cart_service/frontend
-npm install
-npm run dev -- --host 0.0.0.0
+npm ci
+npm run dev
 ```
 
-`http://127.0.0.1:5173`을 열고 카메라 권한을 허용합니다.
+### 4. 카메라 테스트
+
+1. 브라우저에서 `http://127.0.0.1:5173`을 엽니다.
+2. 카메라 권한 요청이 나오면 `허용`을 누릅니다.
+3. 상품을 카메라에 비춥니다.
+4. 신뢰도 75% 이상이고 같은 상품이 2번 연속 감지되면 장바구니에 추가됩니다.
+
+카메라가 보이지 않으면 브라우저 주소창 왼쪽의 카메라 권한을 `허용`으로 바꾼 뒤 새로고침합니다. `localhost`와 `127.0.0.1`은 로컬 카메라 테스트가 가능한 안전한 주소입니다.
 
 ## 배포
 
@@ -57,7 +93,7 @@ npm run dev -- --host 0.0.0.0
 
 - `backend/Dockerfile`: CUDA 기반 YOLOv8 API 컨테이너
 - `cloudbuild.yaml`: GitHub → Cloud Build → Cloud Run GPU 자동 배포
-- `frontend`를 Vercel에 연결하고 `VITE_API_BASE_URL` 환경변수에 Cloud Run의 `/api` 주소를 설정
+- `frontend`를 Vercel에 연결하고 `VITE_API_BASE_URL` 환경변수에 배포한 백엔드의 `/api` 주소를 설정
 
 계정 설정부터 배포 확인까지의 전체 순서는 [웹배포 실시간 카메라 가이드](docs/웹배포_실시간카메라_가이드.md)를 참고합니다.
 
@@ -81,4 +117,4 @@ V7은 YOLOv8n 기반의 식재료 10종 인식 모델입니다. 학습 과정과
 | Frontend | React, Vite, Lucide React |
 | Backend | Python, SQLite, 표준 HTTP 서버 |
 | AI | Ultralytics YOLOv8n, PyTorch CUDA |
-| 배포 | Vercel, Google Cloud Run GPU, Cloud Build, Cloud Storage |
+| 배포 | Vercel, Docker, Cloud Run GPU (선택) |
