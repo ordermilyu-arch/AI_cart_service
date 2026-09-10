@@ -87,28 +87,11 @@ npm run dev
 
 카메라가 보이지 않으면 브라우저 주소창 왼쪽의 카메라 권한을 `허용`으로 바꾼 뒤 새로고침합니다. `localhost`와 `127.0.0.1`은 로컬 카메라 테스트가 가능한 안전한 주소입니다.
 
-## 배포
-
-배포에 필요한 파일은 이미 포함되어 있습니다.
-
-- `backend/Dockerfile`: CUDA 기반 YOLOv8 API 컨테이너
-- `cloudbuild.yaml`: GitHub → Cloud Build → Cloud Run GPU 자동 배포
-- `frontend`를 Vercel에 연결하고 `VITE_API_BASE_URL` 환경변수에 배포한 백엔드의 `/api` 주소를 설정
-
-계정 설정부터 배포 확인까지의 전체 순서는 [웹배포 실시간 카메라 가이드](docs/웹배포_실시간카메라_가이드.md)를 참고합니다.
-
 ## 학습 모델
 
 V7은 YOLOv8n 기반의 식재료 10종 인식 모델입니다. 학습 과정과 검증 성능은 [최종 모델 기록](docs/로컬_YOLOv8_최종_모델_기록.md)에 정리했습니다.
 
 학습·평가 재현용 스크립트는 `scripts/`에 포함했습니다. 학습 데이터셋과 중간 실험 가중치는 제외하고, 최종 서비스 V7 가중치 `backend/models/smart_cart.pt` 하나만 포함합니다.
-
-## 공개 저장소 보안 원칙
-
-- `BOX/`, 학습 데이터셋, `.venv/`, `node_modules/` 제외
-- 최종 서비스 V7 가중치 하나만 공개하고, 중간 실험 가중치는 제외
-- API 키·개인 환경 파일 제외
-- Roboflow API 키와 Cloud Storage 접근 키를 사용하지 않음
 
 ## 기술 스택
 
@@ -117,4 +100,4 @@ V7은 YOLOv8n 기반의 식재료 10종 인식 모델입니다. 학습 과정과
 | Frontend | React, Vite, Lucide React |
 | Backend | Python, SQLite, 표준 HTTP 서버 |
 | AI | Ultralytics YOLOv8n, PyTorch CUDA |
-| 배포 | Vercel, Docker, Cloud Run GPU (선택) |
+| 실행 환경 | 로컬 브라우저, Python API |
